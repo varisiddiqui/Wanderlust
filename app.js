@@ -199,6 +199,24 @@ app.use((err, req, res, next) => {
 
 //Listing.findByIdAndDelete('67de7aba7df67aced6c4e4be').then((res) => console.log(res)).catch((err) => console.log(err));
 
+//const Listing = require("./models/listing");
+const initData = require("./init/data");
+
+app.get("/seed", async (req, res) => {
+  try {
+    await Listing.deleteMany({});
+    await Listing.insertMany(
+      initData.data.map((obj) => ({
+        ...obj,
+        owner: "67fb9191b9ad3a3efa52018d",
+      }))
+    );
+    res.send("✅ Database seeded successfully");
+  } catch (err) {
+    res.status(500).send("❌ Error: " + err.message);
+  }
+});
+
 
 app.listen(8080, () => {
     console.log("server is listening to port 8080");
