@@ -138,6 +138,11 @@ const validateReview = (req, res, next) => {
     res.send(registeredUser);
 }); */
 
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
+
 app.use("/listings", listingRouter); //here "/listings" , "/listings/:id/reviews" is common part
 app.use("/listings/:id/reviews", reviewRouter); 
 app.use("/", userRouter);
