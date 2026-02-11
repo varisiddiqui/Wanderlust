@@ -1,364 +1,381 @@
-**airbnb**
+# 🏠 WanderLust -- Airbnb Clone (Full Stack Web Application)
 
-for image = get set usage
+WanderLust is a production-style full-stack web application inspired by
+Airbnb.\
+The project demonstrates robust backend engineering practices including
+authentication, authorization, session management, validation, file
+uploads, geocoding, and secure data handling --- all structured using
+clean architectural principles.
 
-set  is a function
-(val) => {}  //entered from frontend
+This project was built to deeply understand how scalable web
+applications are designed and secured.
 
+------------------------------------------------------------------------
 
-When you use an anchor (<a>) tag in HTML, clicking on it automatically sends a GET request to the specified URL.
+# 🚀 Technical Overview
 
+WanderLust is built using Node.js, Express.js, MongoDB, and EJS
+(server-side rendering).\
+It follows RESTful principles and implements layered validation, modular
+routing, secure authentication, and cloud-based media storage.
 
- If you use destructuring, the variable name must match the keys.
+The goal of this project was not just feature replication, but
+understanding *why* architectural decisions matter in real-world
+applications.
 
- **without using listing[]**
- {
-  description: 'hello',
-  image: 'kkk',
-  price: '256',
-  country: 'afgan',
-  location: 'delhi'
-}
+------------------------------------------------------------------------
 
-**using listing[]**
-{
-  listing: {
-    title: 'mehroli',
-    description: 'sb2bg',
-    image: 'jj',
-    price: '1200',
-    country: 'India',
-    location: 'Delhi'
+# 🏗 Architecture & Design Principles
+
+## MVC Pattern (Model-View-Controller)
+
+The application follows a strict MVC structure:
+
+-   **Models** → Database schemas and data logic (Mongoose)
+-   **Views** → UI rendering using EJS templates
+-   **Controllers** → Business logic and request handling
+
+This separation ensures scalability, maintainability, and readability.
+
+------------------------------------------------------------------------
+
+## Modular Routing
+
+Instead of a monolithic `app.js`, routes are separated using:
+
+``` js
+const router = express.Router();
+```
+
+Each major resource (Listings, Reviews, Users) has its own route file.
+
+### Nested Routes & mergeParams
+
+For routes such as:
+
+    /listings/:id/reviews
+
+`mergeParams: true` is used so child routers can access parent
+parameters (like listing ID).
+
+If parent and child parameters conflict, the child value takes
+precedence.
+
+------------------------------------------------------------------------
+
+# 🔐 Authentication & Security
+
+Security was implemented as a core system feature.
+
+## Passport.js (Local Strategy)
+
+Authentication is handled using:
+
+-   passport
+-   passport-local
+-   passport-local-mongoose
+
+### Configuration
+
+``` js
+passport.initialize()
+passport.session()
+passport.use(new LocalStrategy(User.authenticate()))
+```
+
+### Authentication Flow
+
+1.  User logs in
+2.  Passport serializes user ID into session
+3.  On future requests, Passport deserializes user from database
+4.  `req.user` becomes available
+
+After successful login, Passport regenerates the session to prevent
+session fixation attacks.
+
+------------------------------------------------------------------------
+
+## Password Security
+
+Passwords are **never stored in plain text**.
+
+Using `passport-local-mongoose`:
+
+-   Hashing (one-way function)
+-   Salting (random string added before hashing)
+
+Properties of hashing:
+
+-   Fixed length output
+-   Small input change → large output difference
+-   Irreversible
+
+------------------------------------------------------------------------
+
+## Authorization Middleware
+
+Custom middleware protects sensitive routes:
+
+-   `isLoggedIn`
+-   `isOwner`
+-   `isReviewAuthor`
+
+Users cannot edit or delete resources they do not own.
+
+------------------------------------------------------------------------
+
+# 🍪 Sessions & Cookies
+
+HTTP is stateless by default.\
+Express sessions simulate stateful behavior.
+
+## Session Configuration
+
+``` js
+const sessionOptions = {
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 3
   }
-}
+};
+```
 
-**Note**
-When you structure form inputs as -> listing[fieldname], the submitted data is grouped into a nested object inside req.body, rather than as separate key-value pairs.
+### Key Concepts
 
+-   Session data is stored server-side.
+-   Only session ID (`connect.sid`) is stored in the browser cookie.
+-   `httpOnly` prevents JavaScript access (XSS protection).
+-   `resave: false` avoids unnecessary session store writes.
+-   `saveUninitialized: true` allows early session tracking.
 
-The <%- body %> acts as a placeholder for the page's unique content, while the rest of the boilerplate (layout.ejs) remains the same for every page.
+### Session Lifecycle
 
-!important → This forces the rule to override any other conflicting styles, even if they have higher specificity.
+  Action                 New Session Created?
+  ---------------------- ----------------------
+  First Visit            Yes
+  Same Browser Request   No
+  After Login            Yes
+  After Logout           Yes
 
+------------------------------------------------------------------------
 
-# Form Validations
+## connect-flash
 
-When we enter data in the form, the browser and/or the web server will check to see that the data is In the correct format and within the constraints set by the application.
+Flash messages are stored temporarily inside the session and cleared
+after being displayed.
 
-# Note
-When you enter "e", Mongoose thinks it's part of a valid number (like 1e3), so it waits for more digits.
+------------------------------------------------------------------------
 
-If you enter "e" alone without any preceding number, Mongoose doesn't throw an immediate error, but it doesn’t store it as a valid number either.
+## res.locals
 
-# Joi
-1. Joi (Request Validation - Pre-Database)
-Purpose: Joi is used to validate incoming data (requests) before it reaches the database.
+Variables stored in `res.locals` are accessible in templates during a
+single request-response cycle.
 
-Where Used? Joi is typically used in the backend (Express.js, API validation) to ensure the request data follows a defined structure.
+------------------------------------------------------------------------
 
-When Applied? Before data is even processed or inserted into the database.
+# 🛡 Robust Data Validation
 
-How it Works? Joi checks whether the request object (e.g., req.body) meets the validation rules.
+Validation is implemented at multiple layers.
 
-# schema validation
-2. Mongoose Schema Validation (Database-Level)
-Purpose: Mongoose schema validation ensures data inside the database follows predefined constraints.
+## 1. Client-Side Validation
 
-Where Used? Used inside MongoDB models to enforce structure when storing data.
+-   HTML5 validation attributes
+-   Bootstrap validation scripts
 
-When Applied? When saving data into the database.
+⚠️ Can be bypassed using Postman or Hoppscotch.
 
-How it Works? If data does not meet the schema rules, Mongoose will reject the save operation.
+------------------------------------------------------------------------
 
-# Why Doesn't Client-Side Validation Work in Hoppscotch/Postman?
-Client-side validation only works inside a web browser because it relies on HTML attributes and JavaScript running in the browser. However, when you use Hoppscotch or Postman, you are directly sending an HTTP request to the server, bypassing the browser entirely.
+## 2. Server-Side Validation (Joi)
 
-# Direct HTTP Request – It directly sends a request to the server without checking whether the form data is valid.
+Joi validates incoming `req.body` before it reaches the database.
 
-# Even if the comment and rating are empty, the server still receives this request and processes it unless you have server-side validation.
+If schema validation fails: - Request is rejected - Standardized error
+is returned
 
+Prevents invalid or malicious data from entering the system.
 
-# Mongo relationships
+------------------------------------------------------------------------
 
-1. one to many=>
+## 3. Mongoose Schema Validation
 
-(i). one to few (like storing address)
-Store the child document inside parent
+Database-level validation ensures data integrity during `.save()`
+operations.
 
-like few addresses are stored inside user model only
+If constraints are violated, Mongoose rejects the operation.
 
-before making model individually first imagine whether we can use it individually.
+### Important Note
 
+Entering `"e"` in number fields may be interpreted as scientific
+notation by Mongoose.
 
-# Mongo $pull operator
+------------------------------------------------------------------------
 
-The $pull operator removes from an existing array all instances of a value or values that match a specified condition.
+# 🗄 Database Strategy (MongoDB)
 
-# const router = express.Router();  creates new router object
-
-This creates a new Router object using express.Router().
-
-A router in Express works like a mini application that helps organize route handlers into separate files/modules.
-
-It allows you to define multiple routes separately and then use them in the main app.
-
-It behaves like a mini version of the app object, but it's only for grouping related routes.
-
-# mergeParams
-	Preserve the req.params values from the parent router. If the parent and the child have conflicting param names, the child’s value take precedence.
-
-# Cookies
-Web Cookies
-
-HTTP cookies are small blocks of data created by a web server while a user is browsing a website and placed on the user's computer or other device by the user's web browser.
-
-# res.cookie(name, value [, options])
-Sets cookie name to value. The value parameter may be a string or object converted to JSON.
-
-The options parameter is an object that can have the following properties.
-
-# req.cookies = print unsigned cookies
-
-
-# What is State?
-
-Stateful Protocol:-
-Stateful Protocol require server to save the status and session information.
-eg - ftp
-
-Stateless Protocol:-
-Stateless Protocol does not require the server to retain the server information or
-eg - http
-
-
-stateful protocol => upi
-stateless protocol => cash
-session = transaction
-
-# Express Sessions
-An attempt to make our session stateful
-
-express session will give small cookie in the form of session id to our browser, and information will be stored in temporary storage.
-
-Create a session middleware with the given options.
-
-Note Session data is not saved in the cookie itself, just the session ID. Session data is stored server-side.
-
-# secret
-Required option
-
-This is the secret used to sign the session ID cookie. 
-
-it will be (connect.sid) i.e. session id for current session as a cookie ajaegi
-
-request koi bhi ho browser ke andar ek sid ajaegi in the form of cookie.
-
-# Amazon cart as an ex
-In different browser it's considering diff. users so sid is different but in same tab it will be same
-
-# resave
-Forces the session to be saved back to the session store, even if the session was never modified during the request.
-
-# saveUninitialized
-Forces a session that is "uninitialized" to be saved to the store.
-
-# Note
-# resave: false
-Meaning: Don't save the session back to the store if it wasn't modified during the request.
-Why it's used: To avoid unnecessary writes to the session store if the session data hasn't changed.
+## One-to-Many Relationships
 
 Example:
-A user visits your site, and the session is loaded.
-If you don't change anything in req.session, then the session won't be saved again — which is more efficient.
 
+-   A Listing has many Reviews
 
-# saveUninitialized: true
-Meaning: Save a new session to the store, even if it's not modified.
-When does it matter?: When a user first visits, and the session is new and empty.
+Implemented using referencing for scalability.
 
-Why it might be true:
-Some tools (like login systems or analytics) may depend on the presence of a session cookie.
-Useful if you want to track unauthenticated users or assign a session ID early.
+------------------------------------------------------------------------
 
+## Cascading Deletes
 
+Mongoose middleware ensures that when a Listing is deleted, all
+associated Reviews are also removed --- preventing orphaned documents.
 
-# connect-flash
-The flash is a special area of the session used for storing messages. Messages are written to the flash and cleared after being displayed to the user.
-Generally used in combination with redirects.
+------------------------------------------------------------------------
 
-# res.locals
-Use this property to set variables accessible in templates rendered with res.render. The variables set on res.locals are available within a single request-response cycle, and will not be shared between requests.
+## \$pull Operator
 
-# Using Sessions
+Used to remove specific elements from an array field without retrieving
+the entire document.
 
-# Adding Cookie Options
+------------------------------------------------------------------------
 
-const sessionOptions = {
-    secret: "mysecretcode",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      expires: Date.now() + 1000 * 60 * 60 * 24 * 3,
-      maxAge: 1000 * 60 * 60 * 24 * 3,
-      httpOnly: true,
-    },
-};
+# ☁️ Image Upload System
 
-# expiry date of cookie is not there by default, so it's present there as we have opened browser..
-but if we set it then it will persist till then in browser.
+Uploading images in a stateless backend requires third-party cloud
+storage.
 
-# Authentication
-Authentication is the process of verifying who someone is..
+## Workflow
 
-# Authorization
-Authorization is the process of verifying what specific applications, files, and data a user has access to..
+Form (`multipart/form-data`) → Multer (Parse file) → Cloudinary (Cloud
+storage) → Store returned URL in MongoDB
 
-# Storing Passwords
-We NEVER store the passwords as it is. We store their hashed form.
+## Multer
 
-Server retrieves the stored hashed password from the database.
+Processes only forms with:
 
-It then hashes the password you entered and compares it with the stored hash using a function like bcrypt.compare().
+    enctype="multipart/form-data"
 
-# Hashing
-What we need to know?
+Instead of storing image blobs in MongoDB, only secure URLs and
+filenames are stored.
 
-For every input, there is a fixed output
+------------------------------------------------------------------------
 
-They are one-way functions, we can't get input from output
+# 🗺 Geocoding & Maps Integration
 
-For a different input, there is a different output but of same length
+Location visualization is implemented using Mapbox.
 
-Small changes in input should bring large changes in output.
+## Geocoding
 
-# Salting
-Password salting is a technique to protect passwords stored in database by adding a string of 32 or more characters and then hashing them.
+When a listing is created:
 
-# Passport
-Passport is express-compatible authentication middleware for Node.js. Extremely flexible and modular, Passport can be unobtrusively dropped in to any Express-based web application. A comprehensive set of strategies support authentication using a username and password, Facebook, Twitter, and more.
+1.  Address string is sent to Mapbox Geocoding API
+2.  API returns GeoJSON coordinates
+3.  Coordinates are stored in MongoDB
 
-# passport-local
-Passport strategy for authenticating with a username and password.
+## Map Rendering
 
-# Passport-Local Mongoose
-Passport-Local Mongoose is a Mongoose plugin that simplifies building username and password login with Passport.
+Coordinates are injected into client-side Mapbox to display precise
+location markers.
 
-adds username, hash, salt field by default
+------------------------------------------------------------------------
 
-Configuring Strategy
+# 📂 Forms & Request Handling
 
-passport.initialize()
+## GET Requests
 
-A middleware that initializes passport.
+Clicking an `<a>` tag automatically sends a GET request.
 
-passport.session()
+## Nested Form Data
 
-A web application needs the ability to identify users as they browse from page to page. This series of requests and responses, each associated with the same user, is known as a session.
+Using:
 
+    listing[fieldname]
 
-# Configuring Strategy=>
-# passport.initialize()
-A middleware that initializes passport.
+Creates structured objects inside `req.body`.
 
-# passport.session()
-A web application needs the ability to identify users as they browse from page to page. This series of requests and responses, each associated with the same user, is known as a session.
+------------------------------------------------------------------------
 
-# passport.use(new LocalStrategy( User.authenticate()))
-It tells passport to use the Local Strategy for authentication (i.e., username & password login), and uses User.authenticate() as the logic to verify the user's credentials.
+# 🎨 Templating & Frontend
 
-# static methods:-
-# authenticate() Generates a function that is used in Passport's 
+-   EJS Layout System (`<%- body %>` placeholder)
+-   Bootstrap for responsive UI
+-   Custom CSS (`!important` overrides conflicting rules)
 
-User logs in →
-Passport uses **serializeUser()** to save the user’s ID in the session.
+Public JS files execute in the browser, not during EJS server rendering.
 
-User makes another request →
-Passport uses **deserializeUser()** to fetch the full user object from the DB using that ID.
+------------------------------------------------------------------------
 
-**register(user, password, cb)** Convenience method to register a new user instance with a given password. Checks if username is unique. 
+# 🌍 Environment Variables
 
-Authenticate Requests
-Use passport.authenticate(), specifying the 'local' strategy, to authenticate requests.
+Environment variables are stored inside `.env` file.
 
-# req.logout(callback) this will execute callback after logout.
+Managed using `dotenv`.
 
-# Note:
-from req.user we can say whether we are logged in or not
+Example:
 
-# Log In
-Passport exposes a login() function on req (also aliased as logIn()) that can be used to establish a login session.
+    CLOUD_NAME=your_cloud_name
+    CLOUD_API_KEY=your_api_key
+    CLOUD_API_SECRET=your_api_secret
+    MAPBOX_TOKEN=your_mapbox_token
+    ATLASDB_URL=your_mongo_url
+    SECRET=your_session_secret
 
-req.login(user, function(err) {
-  if (err) { return next(err); }
-  return res.redirect('/users/' + req.user.username);
-});
+------------------------------------------------------------------------
 
-When the login operation completes, user will be assigned to req.user.
+# 🛠 Tech Stack
 
-# Note: passport.authenticate() middleware invokes req.login() automatically. This function is primarily used when users sign up, during which req.login() can be invoked to automatically log in the newly registered user.
+Frontend: - HTML5 - CSS3 - Bootstrap - EJS
 
-🧠 What does it do?
-Gets credentials from the request (like username & password)
+Backend: - Node.js - Express.js - RESTful Routing
 
-Calls your configured strategy (like LocalStrategy)
+Database: - MongoDB - Mongoose
 
-If successful:
-Automatically calls req.login(user)
-Creates a session with req.user
-You can redirect or respond
+Authentication: - Passport.js - passport-local - passport-local-mongoose
 
-If failure:
-Redirect to login or show an error
+Validation: - Joi
 
-# Note:
-redirectUrl will be deleted,
-It’s because Passport (via req.login()) regenerates the session after successful authentication by default — for security reasons.
+Cloud Services: - Cloudinary - Mapbox
 
-Action	                          New Session?	    Explanation
-First visit	                      ✅              	No session cookie yet → create new session
-Next request (same browser)	      ❌              	Session ID exists → reuse existing session
-Manual req.session.key = val     	❌              	Just modifies current session
-After successful login	          ✅              	Old session is destroyed, new one created for safety
-After logout                    	✅               (next time)	New session starts again after logout.
+------------------------------------------------------------------------
 
+# 🏁 Installation & Setup
 
-# router.route
-combines the same path route
+Clone the repository:
 
+``` bash
+git clone https://github.com/yourusername/wanderlust.git
+```
 
-#Image Upload
-1. Make form capable of sending files.
-2. 3rd party service to store file(will provide url)
-3. Save this link in mongo
+Install dependencies:
 
+``` bash
+npm install
+```
 
-# Multer 
-Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. It is written on top of busboy for maximum efficiency.
+Create a `.env` file and configure environment variables.
 
-NOTE: Multer will not process any form which is not multipart (multipart/form-data).
+Run the application:
 
-# .env
-environmental var are in key-value pairs
+``` bash
+node app.js
+```
 
-# dotenv
-integrates our env file with backend
+------------------------------------------------------------------------
 
-#cloudinary
+# 📌 Important Implementation Notes
 
+-   Specific routes must be defined above generic `:id` routes.
+-   Client-side validation is never trusted alone.
+-   Session ID regenerates after login/logout.
+-   Hashing is one-way and irreversible.
+-   Child routers can access parent parameters using `mergeParams`.
+-   Flash messages persist for one request cycle only.
+-   Geocoding converts addresses to coordinates.
 
-# form(file) -> backend(parse) -> cloud(store) -> URL/link(file)
+------------------------------------------------------------------------
 
-# Note
-This is a common Express gotcha! Always place more specific routes above the generic :id-based routes.
+# 📄 License
 
-# Geocoding
-Geocoding is the process of converting addresses (like a street address) into geographic coordinates (like latitude and longitude), which you can use to place markers on a map, or position the map.
-
-# Note:
-You can't directly read or use /public/js content in EJS because:
-
-EJS runs on the server before anything gets to the browser.
-
-JS files in /public are for the browser and run later.
-
-You can pass values from EJS to client-side JS by defining global variables in <script> tags.
+This project was built for educational purposes to master full-stack web
+development concepts and backend architecture design.
