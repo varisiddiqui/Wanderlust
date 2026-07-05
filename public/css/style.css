@@ -1,52 +1,148 @@
+/* ==========================
+        GLOBAL STYLES
+========================== */
+
+* {
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+body {
+    background-color: #fdfdfd;
+    color: #222;
+}
+
+.container {
+    max-width: 1280px;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* Smooth scroll + transitions globally */
+* {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: "Plus Jakarta Sans", sans-serif !important;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background: #fafafa;
+    color: #222222;
 }
 
 .container {
     flex: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
 }
 
-.navbar {
-    height: 5rem;
-    background-color: white;
-}
-
-.fa-compass {
-    color: #fe424d;
-    font-size: 2rem;
-}
-
-.nav-link {
-    color: #222222 !important;
-}
-
-/* Footer */
-.f-info-links a {
+a {
     text-decoration: none;
-    color: #222222;
+    color: inherit;
 }
 
-.f-info-links a:hover {
-    text-decoration: underline;
+img {
+    display: block;
+    max-width: 100%;
 }
 
-.f-info-links,
-.f-info-socials,
-.f-info-brand {
-    width: 100%;
-    vertical-align: middle;
-    display: flex;
+::selection {
+    background: #ff385c;
+    color: white;
+}
+
+/* ==========================
+          NAVBAR
+========================== */
+
+
+.wl-navbar {
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    padding: 14px 0;
+}
+
+.wl-navbar .navbar-brand {
+    font-weight: 700;
+    font-size: 20px;
+    color: #FF385C;
+}
+
+.wl-navbar .logo-text {
+    color: #222;
+}
+
+.wl-navbar .nav-link {
+    color: #333;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 20px;
+    transition: background 0.2s ease;
+}
+
+.wl-navbar .nav-link:hover {
+    background: #f5f5f5;
+}
+
+.wl-search-form {
+    position: relative;
     align-items: center;
-    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    padding: 4px 6px 4px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-
-.f-info-socials i {
-    margin-right: 1rem;
+.wl-search-icon {
+    color: #888;
+    margin-right: 8px;
+    font-size: 14px;
 }
+
+.search-inp {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    min-width: 220px;
+}
+
+.search-btn {
+    background: #FF385C;
+    color: #fff;
+    border-radius: 24px;
+    padding: 6px 20px;
+    font-weight: 500;
+    border: none;
+}
+
+.search-btn:hover {
+    background: #e11d48;
+    color: #fff;
+}
+
+.auth-btn, .login-btn {
+    font-weight: 600;
+}
+    
+   
+/* ==========================
+          FOOTER
+========================== */
 
 .f-info {
     text-align: center;
@@ -58,7 +154,39 @@ body {
     align-items: space-evenly;
 }
 
-/* Cards */
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.f-info-links a {
+    color: #222;
+    margin: 0 .7rem;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+}
+
+.f-info-socials i {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.f-info-socials i:hover {
+    color: #ff385c;
+}
+
+/* ==========================
+          CARDS
+========================== */
+
 .listing-card {
     border: none !important;
     margin-bottom: 2rem;
@@ -80,39 +208,40 @@ body {
 
 .listing-link {
     text-decoration: none;
+    color: inherit;
 }
 
-/* Card Effect */
-.card-img--overlay {
+.card-img-overlay {
     opacity: 0;
+    transition: .3s;
 }
 
 .card-img-overlay:hover {
-    opacity: 0.2;
-    background-color: white;
+    opacity: .15;
+    background: white;
 }
 
-/* New Page*/
+/* ==========================
+        BUTTONS
+========================== */
 
-.add-btn {
-    background-color: #fe424d !important;
-    border: none !important;
-}
-
-/* Edit Page */
+.add-btn,
 .edit-btn {
-    background-color: #fe424d !important;
+    background: #ff385c !important;
     border: none !important;
 }
 
-/* Show Image */
+.add-btn:hover,
+.edit-btn:hover {
+    background: #e61e4d !important;
+}
+
+/* ==========================
+        SHOW PAGE
+========================== */
 
 .show-img {
     height: 30vh;
-}
-
-.btns {
-    display: flex;
 }
 
 .show-card {
@@ -120,9 +249,82 @@ body {
     padding-right: 0;
 }
 
-/* MAP */
+.btns {
+    display: flex;
+    gap: 1rem;
+}
+
+/* ==========================
+            MAP
+========================== */
+
 #map {
     height: 400px;
     width: 80vh;
-     
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+/* ===== Footer ===== */
+footer {
+    background: #f7f7f7;
+    border-top: 1px solid #eee;
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+}
+
+.f-info {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 20px;
+    gap: 12px;
+}
+
+.f-info-socials {
+    display: flex;
+    gap: 16px;
+}
+
+.f-info-socials i {
+    font-size: 1.2rem;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.f-info-socials i:hover {
+    color: #FF385C;
+}
+
+.f-info-brand {
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: 500;
+}
+
+.f-info-links {
+    display: flex;
+    gap: 20px;
+}
+
+.f-info-links a {
+    color: #444;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.f-info-links a:hover {
+    color: #FF385C;
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .f-info {
+        flex-direction: column;
+        text-align: center;
+    }
 }

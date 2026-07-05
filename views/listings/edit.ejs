@@ -1,7 +1,83 @@
 <% layout("/layouts/boilerplate") -%>
 
-    <div class="row mt-3">
-        <div class="col-8 offset-2">
+<style>
+    .form-wrapper {
+        max-width: 650px;
+        margin: 1.5rem auto 3rem auto;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        padding: 2.5rem;
+    }
+
+    .form-wrapper h3 {
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 1.75rem;
+        color: #222;
+    }
+
+    .form-wrapper label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .form-wrapper .form-control {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-wrapper .form-control:focus {
+        border-color: #FF385C;
+        box-shadow: 0 0 0 3px rgba(255,56,92,0.12);
+    }
+
+    .form-wrapper textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .original-img-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #333;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .original-img-preview {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+    .edit-btn {
+        background: #FF385C;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 10px 32px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: background 0.2s ease;
+    }
+
+    .edit-btn:hover {
+        background: #e11d48;
+        color: #fff;
+    }
+</style>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="form-wrapper">
             <h3>Edit your Listing</h3>
             <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
                 <div class="mb-3">
@@ -12,14 +88,13 @@
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea name="listing[description]" placeholder="description"
-                        class="form-control" required><%=listing.description%></textarea>
-                        <div class="invalid-feedback">Please enter short a description</div>
+                    <textarea name="listing[description]" placeholder="description" class="form-control" required><%=listing.description%></textarea>
+                    <div class="invalid-feedback">Please enter short a description</div>
                 </div>
 
                 <div class="mb-3">
-                    Original Listing Image<br>
-                    <img src="<%= OriginalImageUrl%>">
+                    <span class="original-img-label">Original Listing Image</span>
+                    <img src="<%= OriginalImageUrl %>" class="original-img-preview">
                 </div>
 
                 <div class="mb-3">
@@ -46,9 +121,9 @@
                     <input name="listing[location]" value="<%=listing.location%>" type="text" class="form-control" required>
                     <div class="invalid-feedback">Please enter a valid location</div>
                 </div>
-                
-                <button class="btn btn-dark edit-btn mt-3">Edit</button>
-                <br><br>
+
+                <button class="btn edit-btn mt-3">Save Changes</button>
             </form>
         </div>
     </div>
+</div>

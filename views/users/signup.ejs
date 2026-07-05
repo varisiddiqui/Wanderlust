@@ -1,26 +1,80 @@
 <% layout("/layouts/boilerplate") -%>
 
- 
-    <div class="row mt-3">
-        <h1 class="col-6 offset-3">SignUp on WanderLust</h1>
-        <div class="col-6 offset-3">
-            <form action="/signup" method="POST" class="needs-validation" novalidate>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input name="username" id="username" type="text" class="form-control" required>
-                    <div class="valid-feedback">Looks good!</div>
-                </div>
+<style>
+    .auth-wrapper {
+        max-width: 420px;
+        margin: 3rem auto;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        padding: 2.5rem;
+    }
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input name="email" id="email" type="email" class="form-control" required>
-                </div>
+    .auth-wrapper h1 {
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+        color: #222;
+        text-align: center;
+    }
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input name="password" id="password" type="password" class="form-control" required>
-                </div>
-                <button class="btn btn-success">SignUp</button>
-            </form>
+    .auth-wrapper label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .auth-wrapper .form-control {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .auth-wrapper .form-control:focus {
+        border-color: #FF385C;
+        box-shadow: 0 0 0 3px rgba(255,56,92,0.12);
+    }
+
+    .auth-btn-submit {
+        width: 100%;
+        background: #FF385C;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 10px 0;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+        transition: background 0.2s ease;
+    }
+
+    .auth-btn-submit:hover {
+        background: #e11d48;
+        color: #fff;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <h1>SignUp on WanderLust</h1>
+    <form action="/signup" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input name="username" id="username" type="text" class="form-control" required>
+            <div class="valid-feedback">Looks good!</div>
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input name="email" id="email" type="email" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input name="password" id="password" type="password" class="form-control" required>
+        </div>
+        <button class="auth-btn-submit">SignUp</button>
+    </form>
+</div>
